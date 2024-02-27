@@ -12,8 +12,10 @@ if __name__ == "__main__":
     app = App(db)
     # app.run()
 
-    ### TEST 1:
-    # Original user closes an issue
+    ##############
+    ### TEST 1 ###
+    ##############
+    # Original user closes an issue, trying upvotes before and after:
     report1 = app.add_report(
         user=app.user,
         location=(0, 0),
@@ -33,10 +35,13 @@ if __name__ == "__main__":
 
     app.downvote(app.user, report1)
 
+    assert app.user.points == 3
     assert report1.upvotes == report1.downvotes == 1
 
     # User resolves the report
     app.resolve_report(app.user, report1)
+
+    assert report1.status == "resolved"
 
     with pytest.raises(ValueError):
         # User upvotes a already closed report
@@ -52,10 +57,12 @@ if __name__ == "__main__":
     assert report == report1
     assert user.name == "default"
 
-    ### TEST 2:
+    ##############
+    ### TEST 2 ###
+    ##############
     # Another user tries to close an issue, then it gets closed by downvotes / bounty
 
-    app.user.points = 100  # Manual set
+    app.user.points = 100  # Manual set for testing purposes
 
     report2 = app.add_report(
         user=app.user,
@@ -81,7 +88,6 @@ if __name__ == "__main__":
         app.downvote(app.user, report2)
 
     assert user.points == 101
-
     assert report2.status == "resolved"
 
     with pytest.raises(ValueError):
