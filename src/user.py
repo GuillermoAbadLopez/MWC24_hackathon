@@ -14,10 +14,8 @@ class User:
         self.mobile_number = mobile_number
         self.location = None
 
-    def report_issue(self, title, content, bounty, location):
+    def report_issue(self, title, content, bounty):
         """Report an issue."""
-        if NokiaLocationVerification(self.mobile_number, location):
-            return Report(title, content, self, bounty)
         if self.points >= bounty:
             self.points -= bounty
             return Report(title, content, self, bounty)
@@ -43,14 +41,6 @@ class User:
         if report.downvotes - report.upvotes >= 5:
             report.close()
         self.points += report.bounty // 10
-
-    def get_close_reports(self, db):
-        """Get the reports that are closed."""
-        return [
-            report
-            for report in db.reports
-            if self.in_radius(report.location, NokiaLocationRetrieval(self.mobile_number))
-        ]  # Change this for a query that returns the reports that are closer than a radius
 
     def __str__(self):
         return f"User: {self.name}, Points: {self.points}"

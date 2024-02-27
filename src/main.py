@@ -3,14 +3,6 @@
 from app import App
 
 
-class NokiaLocationRetrieval:
-    pass
-
-
-class NokiaLocationVerification:
-    pass
-
-
 class Database:
     """Database class for the app."""
 

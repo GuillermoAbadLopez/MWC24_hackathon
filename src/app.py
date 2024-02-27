@@ -4,6 +4,14 @@ from report import Report
 from user import User
 
 
+class NokiaLocationRetrieval:
+    pass
+
+
+class NokiaLocationVerification:
+    pass
+
+
 class App:
     """Main class of the application."""
 
@@ -17,11 +25,24 @@ class App:
         self.db.insert_user(user)
         return user
 
-    def add_report(self, user, title, content, bounty):
+    # TODO:  Where should we do this? In the app or in the user?
+    def add_report(self, user, title, content, bounty, location):
         """Add a report to the app."""
-        report = user.report_issue(title, content, bounty)
-        self.update_db(user, report)
-        return report
+        if NokiaLocationVerification(user.mobile_number, location):
+            report = user.report_issue(title, content, bounty)
+            self.update_db(user, report)
+            return report
+        else:
+            return "Location not verified"
+
+    # TODO: When to call this?
+    def get_close_reports(self, user, db):
+        """Get the reports that are closed."""
+        return [
+            report
+            for report in db.reports
+            if self.in_radius(report.location, NokiaLocationRetrieval(user.mobile_number))
+        ]  # Change this for a query that returns the reports that are closer than a radius
 
     def resolve_report(self, user, report):
         """Add a report to the app."""
