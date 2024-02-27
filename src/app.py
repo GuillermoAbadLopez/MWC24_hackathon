@@ -1,6 +1,6 @@
 """ This module contains the App class which is the main class of the application. """
 
-from dbs_and_apis import NokiaLocationRetrieval, NokiaLocationVerification
+from helpers import NokiaLocationRetrieval, NokiaLocationVerification
 from report import Report
 from user import User
 

@@ -1,7 +1,7 @@
 """ Main file for the app."""
 
 from app import App
-from dbs_and_apis import Database
+from helpers import Database
 
 ### MAIN LOOP APP:
 
