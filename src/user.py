@@ -1,6 +1,5 @@
 """User module for the app."""
 
-from main import NokiaLocationRetrieval, NokiaLocationVerification
 from report import Report
 
 
