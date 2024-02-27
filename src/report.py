@@ -1,7 +1,5 @@
 """Report module for the app."""
 
-from ideas.copilot_suggestions.fourth import User
-
 
 class Report:
     """Report class for the app."""
@@ -10,7 +8,7 @@ class Report:
         self,
         id: int,
         title: str,
-        user: User,
+        user_name: str,
         location: tuple[float],
         category: str,
         description: str = "",
@@ -20,7 +18,7 @@ class Report:
     ):
         self.id: int = id
         self.title: str = title
-        self.user: User = user
+        self.user_name: str = user_name
         self.location: tuple[float] = location  # bus, metro, bicycles, rentHousing, pets, parking, garbage, trees,
         # publicSpaces, commerce, infrastructure, noOrBadSignal, air, water, noise, soil, security, other
         self.category: str = category
@@ -40,13 +38,13 @@ class Report:
         if self.status == "pending":
             self.status = "active"
         if self.status == "resolved":
-            return "You can't upvote a resolved report"
+            raise ValueError("You can't upvote a resolved report")
         self.upvotes += 1
 
     def downvote(self) -> None | str:
         """Downvote the report."""
         if self.status == "resolved":
-            return "You can't upvote a resolved report"
+            raise ValueError("You can't downvote a resolved report")
         self.downvotes += 1
         if self.downvotes - self.upvotes >= 5:
             self.close()

@@ -35,9 +35,10 @@ class App:
     ) -> Report:
         """Add a report to the app."""
         if not NokiaLocationVerification(user.mobile_number, location):
-            return "Location not verified"
+            raise ValueError("Location not verified")
 
         report = user.report_issue(title, location, category, description, image, status, bounty)
+        self.db.insert_report(report)
         self.update_db(user, report)
         return report
 
@@ -48,6 +49,10 @@ class App:
             for report in db.reports
             if self.in_radius(report.location, NokiaLocationRetrieval(user.mobile_number))
         ]  # TODO: Change this for a query that returns the reports that are closer than a radius
+
+    def in_radius(self, location: tuple[float], user_location: NokiaLocationRetrieval) -> bool:
+        """Check if a location is in a radius."""
+        return True  # TODO: Do something like location == user_location.location
 
     def resolve_report(self, user: User, report: Report) -> None:
         """Add a report to the app."""
@@ -93,7 +98,6 @@ class App:
     def update(self):
         self.reports = self.get_close_reports(self.user, self.db)
         self.user = self.db.get_user(self.user.name)
-        self.reports = self.db.get_report(self.reports.title)
 
     def draw(self):
         pass  # Front-end printing, with location and self.reports, self.db, self.user

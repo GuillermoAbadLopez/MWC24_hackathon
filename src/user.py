@@ -17,13 +17,14 @@ class User:
     def report_issue(self, title, location, category, description, image, status="pending", bounty=0) -> Report | str:
         """Report an issue."""
         if self.points < bounty:
-            return "Not enough points to set this bounty"
+            raise ValueError("Not enough points to set this bounty")
 
         self.points -= bounty
+        self.points += 1
         return Report(
-            id=np.random.randint(),
+            id=np.random.randint(0, 999999999),
             title=title,
-            user=self,
+            user_name=self.name,
             location=location,
             category=category,
             description=description,
@@ -33,8 +34,8 @@ class User:
         )
 
     def resolve_report(self, report: Report) -> str | None:
-        if not report.user == self and not self.is_admin:
-            return "Only the user who created the report or admin users can resolve the report"
+        if not report.user_name == self.name and not self.is_admin:  # TODO: Change user_name to a user_id (unique)
+            raise ValueError("Only the user who created the report or admin users can resolve the report")
 
         report.status = "resolved"
 

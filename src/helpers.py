@@ -1,14 +1,22 @@
 """Helper module for the app with database and APIs mocks."""
 
-from ideas.copilot_suggestions.fourth import Report, User
+from report import Report
+from user import User
 
 
 class NokiaLocationRetrieval:
-    pass
+    """Mock class for the Nokia Location Retrieval API."""
+
+    def __init__(self, mobile_number):
+        self.mobile_number = mobile_number
 
 
 class NokiaLocationVerification:
-    pass
+    """Mock class for the Nokia Location Verification API."""
+
+    def __init__(self, mobile_number, location):
+        self.mobile_number = mobile_number
+        self.location = location
 
 
 class Database:
@@ -30,6 +38,11 @@ class Database:
         """Update a report to the database."""
         if report.title in self.reports:
             self.reports[report.title] = report
+
+    def update_user(self, user: User):
+        """Update a user to the database."""
+        if user.name in self.users:
+            self.reports[user.name] = user
 
     def get_user(self, name: str):
         """Get a user from the database."""
