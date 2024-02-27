@@ -70,8 +70,12 @@ class App:
     def run(self):
         """Main game loop."""
         while True:
+            self.get_actions()
             self.update()
             self.draw()
+
+    def get_actions(self):
+        pass  # Front-end, recieve user input and call the corresponding method
 
     def update(self):
         self.reports = self.get_close_reports(self.user, self.db)
@@ -79,4 +83,4 @@ class App:
         self.reports = self.db.get_report(self.reports.title)
 
     def draw(self):
-        pass  # Front end printing, with location and self.reports, self.db, self.user
+        pass  # Front-end printing, with location and self.reports, self.db, self.user
