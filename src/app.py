@@ -1,15 +1,8 @@
 """ This module contains the App class which is the main class of the application. """
 
+from dbs_and_apis import NokiaLocationRetrieval, NokiaLocationVerification
 from report import Report
 from user import User
-
-
-class NokiaLocationRetrieval:
-    pass
-
-
-class NokiaLocationVerification:
-    pass
 
 
 class App:
@@ -18,6 +11,7 @@ class App:
     def __init__(self, db):
         self.db = db
         self.user = self.add_user("Alice")
+        self.reports = self.get_close_reports(self.user, self.db)
 
     def add_user(self, name, is_admin=False):
         """Add a user to the app."""
@@ -72,3 +66,17 @@ class App:
             self.db.update_report(report)
         if isinstance(user, User):
             self.db.update_user(user)
+
+    def run(self):
+        """Main game loop."""
+        while True:
+            self.update()
+            self.draw()
+
+    def update(self):
+        self.reports = self.get_close_reports(self.user, self.db)
+        self.user = self.db.get_user(self.user.name)
+        self.reports = self.db.get_report(self.reports.title)
+
+    def draw(self):
+        pass  # Front end printing, with location and self.reports, self.db, self.user
