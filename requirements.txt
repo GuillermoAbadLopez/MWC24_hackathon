@@ -2,3 +2,4 @@ fastapi
 network_as_code
 pymongo
 uvicorn
+numpy
