@@ -6,7 +6,7 @@ docker-compose
 
 Python version 3.9 or higher
 
-+
+\+
 
 pip install -r requirements.txt
 
