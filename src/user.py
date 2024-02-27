@@ -36,7 +36,7 @@ class User:
     def downvote(self, report):
         """Downvote a report."""
         report.downvotes += 1
-        self.points -= 1
+        self.points += 1
         if report.downvotes - report.upvotes >= 5:
             report.close()
         self.points += report.bounty // 10
