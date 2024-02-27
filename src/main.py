@@ -15,7 +15,16 @@ if __name__ == "__main__":
 ### EXAMPLES OF CALLS COMING FROM THE APP, while the app run method:
 
 # User reports an issue
-report1 = app.add_report(app.user, "Issue 1", "This is the first issue", 10)
+report1 = app.add_report(
+    user=app.user,
+    location=(0, 0),
+    category="",
+    title="Issue 1",
+    description="This is the first issue",
+    image=None,
+    status="pending",
+    bounty=10,
+)
 
 # User resolves the report
 app.resolve_report(app.user, report1)
@@ -25,3 +34,8 @@ app.upvote(app.user, report1)
 
 # User downvotes the report
 app.downvote(app.user, report1)
+
+user = app.get_user("default")
+report = app.get_report("Issue 1")
+
+assert report == report1

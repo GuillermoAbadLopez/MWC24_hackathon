@@ -8,9 +8,12 @@ from user import User
 class App:
     """Main class of the application."""
 
-    def __init__(self, db: Database, user: User):
+    def __init__(self, db: Database, user: User = None):
         self.db: Database = db
-        self.user: User = user
+        if user is None:
+            self.user = self.add_user(name="default", mobile_number=123456789, location=(0, 0))
+        else:
+            self.user: User = user
         self.reports: list[Report] = self.get_close_reports(self.user, self.db)
 
     def add_user(self, name: str, mobile_number: int, location: tuple[float], is_admin: bool = False) -> User:
@@ -19,7 +22,17 @@ class App:
         self.db.insert_user(user)
         return user
 
-    def add_report(self, user, title, location, category, description, image, status="pending", bounty=0) -> Report:
+    def add_report(
+        self,
+        user: User,
+        title: str,
+        location: tuple[float],
+        category: str,
+        description: str,
+        image,
+        status="pending",
+        bounty=0,
+    ) -> Report:
         """Add a report to the app."""
         if not NokiaLocationVerification(user.mobile_number, location):
             return "Location not verified"
@@ -28,7 +41,7 @@ class App:
         self.update_db(user, report)
         return report
 
-    def get_close_reports(self, user, db) -> list[Report]:
+    def get_close_reports(self, user: User, db: Database) -> list[Report]:
         """Get the reports that are closed."""
         return [
             report
