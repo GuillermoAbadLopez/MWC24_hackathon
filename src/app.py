@@ -48,13 +48,15 @@ class App:
         """Get the reports that are closed."""
         return [
             report
-            for report in db.reports
+            for report in db.reports.values()
             if self.in_radius(report.location, NokiaLocationRetrieval(user.device).get())
         ]
 
     def in_radius(self, location: tuple[float], user_location, radius=1000) -> bool:
         """Check if a location is in a radius."""
-        return (user_location.latitude - location[0]) ** 2 + (user_location.longitude - location[1]) ** 2 < radius**2
+        return (user_location.longitude - location[0]) ** 2 + (user_location.latitude - location[1]) ** 2 < (
+            radius / 111.111  # This is for passing from meters to degrees
+        ) ** 2
 
     def resolve_report(self, user: User, report: Report) -> None:
         """Add a report to the app."""

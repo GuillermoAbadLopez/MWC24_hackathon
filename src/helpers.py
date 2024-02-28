@@ -50,7 +50,7 @@ class Database:
     def update_user(self, user: User):
         """Update a user to the database."""
         if user.name in self.users:
-            self.reports[user.name] = user
+            self.users[user.name] = user
 
     def get_user(self, name: str):
         """Get a user from the database."""
