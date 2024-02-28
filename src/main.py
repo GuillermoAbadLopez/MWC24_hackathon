@@ -142,7 +142,7 @@ if __name__ == "__main__":
     far_report = Report(
         id=1000000,
         title="title",
-        user_name="test",
+        user_id=1111111,
         location=(0, 0),
         category="test",
         description="test",

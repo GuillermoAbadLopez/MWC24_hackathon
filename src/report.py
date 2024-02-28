@@ -8,7 +8,7 @@ class Report:
         self,
         id: int,
         title: str,
-        user_name: str,
+        user_id: int,
         location: tuple[float],
         category: str,
         description: str = "",
@@ -18,7 +18,7 @@ class Report:
     ):
         self.id: int = id
         self.title: str = title
-        self.user_name: str = user_name
+        self.user_id: int = user_id
         self.location: tuple[float] = location  # bus, metro, bicycles, rentHousing, pets, parking, garbage, trees,
         # publicSpaces, commerce, infrastructure, noOrBadSignal, air, water, noise, soil, security, other
         self.category: str = category

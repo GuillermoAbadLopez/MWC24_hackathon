@@ -8,6 +8,7 @@ class User:
     """User class for the app."""
 
     def __init__(self, name: str, device: int, location: tuple[float], is_admin: bool = False):
+        self.id = np.random.randint(0, 999999999)
         self.name: str = name
         self.is_admin: bool = is_admin
         self.points: int = 0
@@ -24,7 +25,7 @@ class User:
         return Report(
             id=np.random.randint(0, 999999999),
             title=title,
-            user_name=self.name,
+            user_id=self.id,
             location=location,
             category=category,
             description=description,
@@ -34,7 +35,7 @@ class User:
         )
 
     def resolve_report(self, report: Report) -> str | None:
-        if not report.user_name == self.name and not self.is_admin:  # TODO: Change user_name to a user_id (unique)
+        if not report.user_id == self.id and not self.is_admin:
             raise ValueError("Only the user who created the report or admin users can resolve the report")
 
         report.status = "resolved"
