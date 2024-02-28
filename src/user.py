@@ -7,11 +7,11 @@ from report import Report
 class User:
     """User class for the app."""
 
-    def __init__(self, name: str, mobile_number: int, location: tuple[float], is_admin: bool = False):
+    def __init__(self, name: str, device: int, location: tuple[float], is_admin: bool = False):
         self.name: str = name
         self.is_admin: bool = is_admin
         self.points: int = 0
-        self.mobile_number: int = mobile_number
+        self.device = device
         self.location: tuple[float] = location
 
     def report_issue(self, title, location, category, description, image, status="pending", bounty=0) -> Report | str:

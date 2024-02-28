@@ -1,16 +1,63 @@
 """ Main file for the app."""
 
+import network_as_code as nac
 import pytest
 from app import App
 from helpers import Database
+from network_as_code.models.device import DeviceIpv4Addr
+
+# We begin by creating a Network-as-Code client
+client = nac.NetworkAsCodeClient(token="d0c3366c43msh32fdce6d032215ep15d5ddjsnc2f2f9591360")
+
+# Then, create a device object
+# The "device@testcsp.net" should be replaced with a test device copied from your Developer Sandbox
+# Or identify a device with its ID, IP address(es) and optionally, a phone number
+device = client.devices.get(
+    ipv4_address=DeviceIpv4Addr(public_address="233.252.0.2", private_address="192.0.2.25", public_port=80),
+    # The phone number accepts the "+" sign, but not spaces or "()" marks
+    phone_number="21431000060",
+)
+
+# ...and create a QoD session for the device
+session = device.create_qod_session(
+    service_ipv4="233.252.0.2", service_ipv6="2001:db8:1234:5678:9abc:def0:fedc:ba98", profile="DOWNLINK_L_UPLINK_L"
+)
+
 
 ### MAIN LOOP APP:
 
 if __name__ == "__main__":
     # Instantiate the database and the app
     db = Database()
-    app = App(db)
+    app = App(db, device)
     # app.run()
+
+    ##############
+    ### TEST 0 ###
+    ##############
+    # User tries to create a report far from the device location and then with bounty without points:
+    with pytest.raises(ValueError, match="Report location is far from current location."):
+        report1 = app.add_report(
+            user=app.user,
+            location=(0, 0),
+            category="",
+            title="Issue 0",
+            description="This is the zeroth issue",
+            image=None,
+            status="pending",
+            bounty=0,
+        )
+    with pytest.raises(ValueError, match="Not enough points to set this bounty"):
+        report1 = app.add_report(
+            user=app.user,
+            location=(device.location().longitude, device.location().latitude),
+            category="",
+            title="Issue 0",
+            description="This is the zeroth issue",
+            image=None,
+            status="pending",
+            bounty=10,
+        )
 
     ##############
     ### TEST 1 ###
@@ -18,7 +65,7 @@ if __name__ == "__main__":
     # Original user closes an issue, trying upvotes before and after:
     report1 = app.add_report(
         user=app.user,
-        location=(0, 0),
+        location=(device.location().longitude, device.location().latitude),
         category="",
         title="Issue 1",
         description="This is the first issue",
@@ -43,11 +90,11 @@ if __name__ == "__main__":
 
     assert report1.status == "resolved"
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="You can't upvote a resolved report"):
         # User upvotes a already closed report
         app.upvote(app.user, report1)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="You can't downvote a resolved report"):
         # User downvotes an already closed report
         app.downvote(app.user, report1)
 
@@ -66,7 +113,7 @@ if __name__ == "__main__":
 
     report2 = app.add_report(
         user=app.user,
-        location=(0, 0),
+        location=(device.location().longitude, device.location().latitude),
         category="",
         title="Issue 2",
         description="This is the second issue",
@@ -76,9 +123,9 @@ if __name__ == "__main__":
 
     assert user.points == 91
 
-    app.add_user(name="default2", mobile_number=10000, location=(0, 0))
+    app.add_user(name="default2", device=device, location=(0, 0))
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Only the user who created the report or admin users can resolve the report"):
         # User2 tries to resolve a report, that is not his
         app.resolve_report(app.get_user("default2"), report2)
 
@@ -92,3 +139,5 @@ if __name__ == "__main__":
 
     with pytest.raises(ValueError):
         app.downvote(app.user, report2)
+
+device.clear_sessions()

@@ -5,18 +5,26 @@ from user import User
 
 
 class NokiaLocationRetrieval:
-    """Mock class for the Nokia Location Retrieval API."""
+    """Class for the Nokia Location Retrieval API."""
 
-    def __init__(self, mobile_number):
-        self.mobile_number = mobile_number
+    def __init__(self, device):
+        self.device = device
+
+    def get(self):
+        return self.device.location()
 
 
 class NokiaLocationVerification:
-    """Mock class for the Nokia Location Verification API."""
+    """Class for the Nokia Location Verification API."""
 
-    def __init__(self, mobile_number, location):
-        self.mobile_number = mobile_number
-        self.location = location
+    def __init__(self, device, location, radius=1000):
+        self.device = device
+        self.longitude = location[0]
+        self.latitude = location[1]
+        self.radius = radius
+
+    def get(self):
+        return self.device.verify_location(self.longitude, self.latitude, self.radius)
 
 
 class Database:

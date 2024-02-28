@@ -8,17 +8,19 @@ from user import User
 class App:
     """Main class of the application."""
 
-    def __init__(self, db: Database, user: User = None):
+    def __init__(self, db: Database, device, user: User = None):
         self.db: Database = db
         if user is None:
-            self.user = self.add_user(name="default", mobile_number=123456789, location=(0, 0))
+            self.user = self.add_user(
+                name="default", device=device, location=(device.location().latitude, device.location().longitude)
+            )
         else:
             self.user: User = user
         self.reports: list[Report] = self.get_close_reports(self.user, self.db)
 
-    def add_user(self, name: str, mobile_number: int, location: tuple[float], is_admin: bool = False) -> User:
+    def add_user(self, name: str, device, location: tuple[float], is_admin: bool = False) -> User:
         """Add a user to the app."""
-        user = User(name, mobile_number, location, is_admin)
+        user = User(name, device, location, is_admin)
         self.db.insert_user(user)
         return user
 
@@ -34,8 +36,8 @@ class App:
         bounty=0,
     ) -> Report:
         """Add a report to the app."""
-        if not NokiaLocationVerification(user.mobile_number, location):
-            raise ValueError("Location not verified")
+        if not NokiaLocationVerification(user.device, location).get():
+            raise ValueError("Report location is far from current location.")
 
         report = user.report_issue(title, location, category, description, image, status, bounty)
         self.db.insert_report(report)
@@ -47,12 +49,12 @@ class App:
         return [
             report
             for report in db.reports
-            if self.in_radius(report.location, NokiaLocationRetrieval(user.mobile_number))
-        ]  # TODO: Change this for a query that returns the reports that are closer than a radius
+            if self.in_radius(report.location, NokiaLocationRetrieval(user.device).get())
+        ]
 
-    def in_radius(self, location: tuple[float], user_location: NokiaLocationRetrieval) -> bool:
+    def in_radius(self, location: tuple[float], user_location, radius=1000) -> bool:
         """Check if a location is in a radius."""
-        return True  # TODO: Do something like location == user_location.location
+        return (user_location.latitude - location[0]) ** 2 + (user_location.longitude - location[1]) ** 2 < radius**2
 
     def resolve_report(self, user: User, report: Report) -> None:
         """Add a report to the app."""
