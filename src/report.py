@@ -1,5 +1,7 @@
 """Report module for the app."""
 
+import json
+
 
 class Report:
     """Report class for the app."""
@@ -48,6 +50,36 @@ class Report:
         self.downvotes += 1
         if self.downvotes - self.upvotes >= 5:
             self.close()
+
+    def to_dict(self) -> dict:
+        """Convert the report to a dictionary."""
+        return {
+            "id": self.id,
+            "title": self.title,
+            "user_id": self.user_id,
+            "location": self.location,
+            "category": self.category,
+            "description": self.description,
+            "image": self.image,
+            "status": self.status,
+            "bounty": self.bounty,
+            "upvotes": self.upvotes,
+            "downvotes": self.downvotes,
+        }
+
+    def to_json(self) -> str:
+        """Convert the report to a json string."""
+        return json.dumps(self.to_dict())
+
+    @classmethod
+    def from_dict(cls, report_dict: dict) -> "Report":
+        """Load the user from a dictionary."""
+        cls(**report_dict)
+
+    @classmethod
+    def from_json(cls, report_json: str) -> "Report":
+        """Load the user from a JSON string."""
+        cls(**json.loads(report_json))
 
     def __str__(self) -> str:
         return f"Report: {self.title}, Bounty: {self.bounty}, Upvotes: {self.upvotes}, Downvotes: {self.downvotes}, Resolutions: {len(self.resolutions)}, Closed: {self.closed}"

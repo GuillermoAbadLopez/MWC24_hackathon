@@ -1,5 +1,7 @@
 """User module for the app."""
 
+import json
+
 import numpy as np
 from report import Report
 
@@ -44,6 +46,31 @@ class User:
         """Upvote/downvote report award."""
         self.points += 1
         self.points += report.bounty // 10
+
+    def to_dict(self) -> dict:
+        """Return the user as a dictionary."""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "is_admin": self.is_admin,
+            "points": self.points,
+            "device": self.device,
+            "location": self.location,
+        }
+
+    def to_json(self) -> str:
+        """Return the user as a JSON string."""
+        return json.dumps(self.to_dict())
+
+    @classmethod
+    def from_dict(cls, user_dict: dict) -> "User":
+        """Load the user from a dictionary."""
+        cls(**user_dict)
+
+    @classmethod
+    def from_json(cls, user_json: str) -> "User":
+        """Load the user from a JSON string."""
+        return cls.from_dict(json.loads(user_json))
 
     def __str__(self) -> str:
         return f"User: {self.name}, Points: {self.points}"
