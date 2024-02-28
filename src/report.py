@@ -14,20 +14,19 @@ class Report:
         location: tuple[float],
         category: str,
         description: str = "",
-        image: "Image" = None,
+        image=None,
         status: str = "pending",
         bounty: int = 0,
     ):
         self.id: int = id
         self.title: str = title
         self.user_id: int = user_id
-        self.location: tuple[float] = location  # bus, metro, bicycles, rentHousing, pets, parking, garbage, trees,
-        # publicSpaces, commerce, infrastructure, noOrBadSignal, air, water, noise, soil, security, other
+        self.location: tuple[float] = location  # bus, metro, bicycles, rentHousing, pets, parking, garbage, trees...
         self.category: str = category
         self.status: str = status  # pending, active and resolved
         self.bounty: int = bounty
         self.description: str = description
-        self.image: "Image" = image
+        self.image = image
         self.upvotes: int = 0
         self.downvotes: int = 0
 
