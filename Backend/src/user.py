@@ -1,5 +1,7 @@
 """User module for the app."""
 
+import json
+
 import numpy as np
 from report import Report
 
@@ -7,11 +9,12 @@ from report import Report
 class User:
     """User class for the app."""
 
-    def __init__(self, name: str, mobile_number: int, location: tuple[float], is_admin: bool = False):
+    def __init__(self, name: str, device: int, location: tuple[float], is_admin: bool = False):
+        self.id = np.random.randint(0, 999999999)
         self.name: str = name
         self.is_admin: bool = is_admin
         self.points: int = 0
-        self.mobile_number: int = mobile_number
+        self.device = device
         self.location: tuple[float] = location
 
     def report_issue(self, title, location, category, description, image, status="pending", bounty=0) -> Report | str:
@@ -24,7 +27,7 @@ class User:
         return Report(
             id=np.random.randint(0, 999999999),
             title=title,
-            user_name=self.name,
+            user_id=self.id,
             location=location,
             category=category,
             description=description,
@@ -34,7 +37,7 @@ class User:
         )
 
     def resolve_report(self, report: Report) -> str | None:
-        if not report.user_name == self.name and not self.is_admin:  # TODO: Change user_name to a user_id (unique)
+        if not report.user_id == self.id and not self.is_admin:
             raise ValueError("Only the user who created the report or admin users can resolve the report")
 
         report.status = "resolved"
@@ -43,6 +46,31 @@ class User:
         """Upvote/downvote report award."""
         self.points += 1
         self.points += report.bounty // 10
+
+    def to_dict(self) -> dict:
+        """Return the user as a dictionary."""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "is_admin": self.is_admin,
+            "points": self.points,
+            "device": self.device,
+            "location": self.location,
+        }
+
+    def to_json(self) -> str:
+        """Return the user as a JSON string."""
+        return json.dumps(self.to_dict())
+
+    @classmethod
+    def from_dict(cls, user_dict: dict) -> "User":
+        """Load the user from a dictionary."""
+        cls(**user_dict)
+
+    @classmethod
+    def from_json(cls, user_json: str) -> "User":
+        """Load the user from a JSON string."""
+        return cls.from_dict(json.loads(user_json))
 
     def __str__(self) -> str:
         return f"User: {self.name}, Points: {self.points}"
